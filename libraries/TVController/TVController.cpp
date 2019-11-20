@@ -4,10 +4,10 @@
 
 // define x and y servo mins and maxes for
 // the TVC's 5 degree range
-#define xMin 1
-#define xMax 1
-#define yMin 1
-#define yMax 1
+#define xMin 0
+#define xMax 180
+#define yMin 0
+#define yMax 180
 
 TVController::TVController(Servo x, Servo y, int xZero, int yZero)
 {
@@ -36,12 +36,14 @@ long TVController::map(long x, long in_min, long in_max, long out_min, long out_
 
 void TVController::moveX(int degrees)
 {
-    int position = int(map(degrees, 0, 5, xMin, xMax));
+    // map a correction value (between 1 and 5) to the actual 5-degree range of the axis
+    int position = int(map(degrees, 0, 180, xMin, xMax));
     xServo.write(position);
 }
 
 void TVController::moveY(int degrees)
 {
-    int position = int(map(degrees, 0, 5, yMin, yMax));
+    // map a correction value (between 1 and 5) to the actual 5-degree range of the axis
+    int position = int(map(degrees, 0, 180, yMin, yMax));
     yServo.write(position);
 }
