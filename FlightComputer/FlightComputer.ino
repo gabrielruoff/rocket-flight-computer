@@ -27,17 +27,17 @@ float suberr = 0;
 int statusLED = 7;
 int buzzer = 6;
 
-//Define servos and their zeroes
+//define servos and their zeroes
 Servo x;
 Servo y;
 
 #define x0 45
 #define y0 45
 
-//Define PIDController
+//define PIDController
 PIDController pid(P, I, D);
 
-//Define Thrust Vectoring Controller
+//define Thrust Vectoring Controller
 TVController TVC(x, y, x0, y0);
 
 // Assign an ID to the sensors
