@@ -1,5 +1,6 @@
 #include <PIDController.h>
 #include <TVController.h>
+#include <rocket_telemetry.h>
 
 #include <Wire.h>
 #include <Adafruit_Sensor.h>
@@ -9,23 +10,22 @@
 
 #include <Servo.h>
 
-//define PID values
-#define P 0.5
-#define I 0.2
-#define D 1
-
 //define offset variables
 float pitchOffset = 0;
 float rollOffset = 0;
 float headingOffset = 0;
 
-//define error arrays
-float err[5];
-float suberr = 0;
+//define PID values
+#define P 0.5
+#define I 0.5
+#define D 1
+
+//define PIDController
+PIDController pid(P, I, D);
 
 //define LEDs and Buzzer
-int statusLED = 7;
-int buzzer = 6;
+#define statusLED 7
+#define buzzer 6
 
 //define servos and their zeroes
 Servo x;
@@ -34,11 +34,13 @@ Servo y;
 #define x0 45
 #define y0 45
 
-//define PIDController
-PIDController pid(P, I, D);
+
 
 //define Thrust Vectoring Controller
 TVController TVC(x, y, x0, y0);
+
+// define rocket telemetry
+rocket_telemetry telemetry(4);
 
 // Assign an ID to the sensors
 Adafruit_9DOF dof = Adafruit_9DOF();
@@ -74,18 +76,19 @@ void setup() {
   Serial.println("Initializing Sensors");
   initSensors();
   TVC.init(4, 5);
-  
+
   //sound buzzer
   tone(buzzer, 1000, 500);
   delay(200);
   tone(buzzer, 1000, 100);
-  
+
 
   // Set sensor offsets
   Serial.println("Press enter to set sensor offsets");
-  while(!Serial.available()) {
-    
+  while (!Serial.available()) {
+
   }
+
   sensors_vec_t offsets = getOrientation();
   pitchOffset = offsets.pitch;
   rollOffset = offsets.roll;
@@ -96,6 +99,11 @@ void setup() {
 }
 
 void loop() {
+
+
+  //define error arrays
+  float err[5];
+  float suberr = 0;
 
   //turn LED on
   digitalWrite(statusLED, HIGH);
@@ -114,30 +122,30 @@ void loop() {
 
   //Accumulate 5 readings and calculate their errors
   //Each reading is an average of ten sensor readings
-  for(int i=0;i<5;i++){
+  for (int i = 0; i < 5; i++) {
 
     suberr = 0;
 
     //accumulate ten readings (suberrs) from the sensor and average them
     //into one reading
-    for(int j=0;j<10;j++){
+    for (int j = 0; j < 10; j++) {
 
       //get a pitch reading from the sensor and subtract the offset
-      suberr+=(getOrientation().pitch-pitchOffset);
-      
+      suberr += (getOrientation().pitch - pitchOffset);
+
     }
 
     //average all ten readings
-    suberr/=10;
+    suberr /= 10;
 
     Serial.print("Suberr avg: ");
     Serial.println(suberr);
 
     err[i] = suberr;
-    
+
   }
 
-  float samplingTime = (micros()-t0)*pow(10,-6);
+  float samplingTime = (micros() - t0) * pow(10, -6);
   Serial.print("Sampling time: ");
   Serial.println(samplingTime);
 
