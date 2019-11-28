@@ -17,8 +17,9 @@ Adafruit_LSM303_Mag_Unified mag = Adafruit_LSM303_Mag_Unified(30302);
 
 void setup() {
   // put your setup code here, to run once:
-rocket_telemetry telemetry(sdpin);
+rocket_telemetry telemetry;
 Serial.begin(115200);
+telemetry.initSDCard(sdpin);
 
 telemetry.deleteFile("log.txt");
 telemetry.logToFile("begin log", "log.txt");
