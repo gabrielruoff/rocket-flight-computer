@@ -3,9 +3,16 @@
 #include <SPI.h>
 #include <SD.h>
 #include <Servo.h>
+#include <SoftwareSerial.h>
 
-rocket_telemetry::rocket_telemetry(int SDPin)
+// SD card stuff
+
+rocket_telemetry::rocket_telemetry(void) : XBee(SoftwareSerial(2, 3))
 {
+    
+}
+
+bool rocket_telemetry::initSDCard(int SDPin) {
     
     File initFile;
     File root;
@@ -14,7 +21,7 @@ rocket_telemetry::rocket_telemetry(int SDPin)
     
     if (!SD.begin(SDPin)) {
         Serial.println(" initialization failed!");
-        while (1);
+        return false;
     }
     Serial.println(" initialization done.");
     
@@ -24,7 +31,7 @@ rocket_telemetry::rocket_telemetry(int SDPin)
     // print the contents of the SD card
     Serial.println("SD card contents:");
     printDirectory(root, 0);
-
+    
     // open the file. note that only one file can be open at a time,
     // so you have to close this one before opening another.
     initFile = SD.open("init.txt", FILE_WRITE);
@@ -36,6 +43,9 @@ rocket_telemetry::rocket_telemetry(int SDPin)
         // close the file:
         initFile.close();
         Serial.println("done.");
+        
+        return true;
+        
     } else {
         // if the file didn't open, print an error:
         Serial.println("error opening init.txt");
@@ -59,11 +69,30 @@ bool rocket_telemetry::logToFile(String str, String filename) {
     
 }
 
+// XBee stuff
+
+void rocket_telemetry::initXBee() {
+
+    XBee.begin(9600);
+    
+}
+
 bool rocket_telemetry::connectToGroundStation() {
     
 }
 
-bool rocket_telemetry::sendToGroundStation(String str) {
+void rocket_telemetry::sendToGroundStation(String str) {
+    
+    int n = str.length();
+    
+    // declaring character array
+    char char_array[n + 1];
+    
+    // copying the contents of the
+    // string to char array
+    strcpy(char_array, str.c_str());
+    
+    XBee.write(char_array);
     
 }
 
