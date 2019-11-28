@@ -13,11 +13,23 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
 
-  if(Serial.available())
-  {
+//  if(Serial.available())
+//  {
+//
+//    telemetry.sendToGroundStation(Serial.readString());
+//    
+//  }
+delay(1000);
+if(telemetry.isAvailable()) {
+  Serial.print("available: ");
+  char* l;
+  telemetry.receiveFromGroundStation(l);
+  Serial.println(l);
+} else {
 
-    telemetry.sendToGroundStation(Serial.readString());
-    
-  }
+Serial.println("not available");
+//telemetry.sendToGroundStation("is anyone out there");
+  
+}
 
 }
