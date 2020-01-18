@@ -7,12 +7,14 @@ class PIDController
 {
   public:
     PIDController(float pgain, float igain, float dgain);
-    float getCorrectionFactor(float err[], float samplingTime);
+    float iterate(float x);
+    setInitial(float initial);
     float p;
     float i;
     float d;
-  private:
-    int _pin;
+    float x_sum;
+    float x_prev;
+    float iterations;
 };
 
 #endif

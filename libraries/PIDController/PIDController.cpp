@@ -6,56 +6,43 @@ PIDController::PIDController(float pgain, float igain, float dgain)
   p = pgain;
   i = igain;
   d = dgain;
+
+  iterations = 0;
+  x_sum = 0;
+  x_prev = 0;
 }
 
-float PIDController::getCorrectionFactor(float err[], float samplingTime) {
-
-  Serial.println("");
-  Serial.println("err array (PID)");
-  for(int i=0;i<5;i++) {
-
-    Serial.println(err[i]);
-
-  }
-  Serial.println("");
-
-
-
-
-  // add all of the error values
-  float sum = 0;
-  for(int i=0; i<5;i++) {
-
-  sum += err[i];
-
-  }
-  // Serial.print("err sum (PID): ");
-  // Serial.println(sum);
- //find the average rate of change of the error
- float derr = (err[4]-err[0])/samplingTime;
-  //   Serial.print("deriv: ");
-  //   Serial.print(err[4]);
-  //   Serial.print(" minus ");
-  //   Serial.print(err[0]);
-  //   Serial.print(" equals ");
-  //   Serial.println(err[4]-err[0]);
-
-  // Serial.print("p = ");
-  // Serial.print(p);
-  // Serial.print(" i = ");
-  // Serial.print(i);
-  // Serial.print(" d = ");
-  // Serial.println(d);
-
-  // Serial.print("PID Calculation: pgain: ");
-  // Serial.print(err[4]*p);
-  // Serial.print(" igain: ");
-  // Serial.print(i*sum);
-  // Serial.print(" dgain: ");
-  // Serial.println(d*derr);
-  // Serial.print("PID Calculated Error: ");
-  // Serial.println((err[4]*p) + (i*sum) + (d*derr));
-    
-  return (err[4]*p) + (i*sum) + (d*derr);
+PIDController::setInitial(float initial) {
+  x_prev = initial;
 }
 
+float PIDController::iterate(float x) {
+
+  iterations++;
+  x_sum += x;
+
+  Serial.println("");
+  float p_correction = p * x;
+  Serial.print("p_correction: ");
+  Serial.println(p_correction);
+
+  float i_correction = i * (x_sum / iterations);
+  Serial.print("i_correction: ");
+  Serial.println(i_correction);
+
+  float deriv = x - x_prev;
+  float d_correction = d * deriv;
+  Serial.print("d_correction: ");
+  Serial.println(d_correction);
+
+  float correction = p_correction + i_correction + d_correction;
+
+  Serial.print("total correction: ");
+  Serial.println(correction);
+
+  x_prev = x;
+
+  return correction;
+
+  }
+  

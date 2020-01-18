@@ -7,6 +7,7 @@
 class TVController
 {
   public:
+
     Servo xServo;
     Servo yServo;
     TVController(Servo x, Servo y, int xZero, int yZero);
@@ -17,7 +18,9 @@ class TVController
     void moveY(int degrees);
     long map(long x, long in_min, long in_max, long out_min, long out_max);
     int position;
+
   private:
+  
     int x0;
     int y0;
 };
