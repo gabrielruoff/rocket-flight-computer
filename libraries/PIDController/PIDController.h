@@ -13,7 +13,7 @@ class PIDController
     float i;
     float d;
     float x_sum;
-    float x_prev;
+    float x_prev[10];
     float iterations;
 };
 
